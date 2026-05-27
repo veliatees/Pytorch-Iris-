@@ -9,22 +9,16 @@ bias= 0.1
 start= 0
 end=10
 
+X=torch.arange(1,50,0.4)
+
 step= 0.09
 
-tensor= torch.arange(start, end, step). unsqueeze(1)
+#y= weight*x +b
 
-y= weight*tensor+bias
-
-print(len(tensor))
-
-train_split= int(0.8*len(tensor)) # training data
-print(train_split)
-print(len(y))
-X_train, y_train= tensor[:train_split], y[:train_split]
-
-print(len(X_train))
-print(len(y_train))
-
-X_test, y_test= tensor[train_split:], y[train_split:]
-print(len(X_test))
-print(len(y_test))
+class LinearRegressionModel(nn):
+    def __init__(self):
+        super().__init__()
+        self.weights= nn.Parameter(torch.randn(1, requires_grad= True, dytype= float))
+        self.bias= nn.Parameter(torch.randn(1, requires_grad= True, dytype= float))
+    def forward(self, x:torch.Tensor): -> torch.Tensor
+        return self.weights*X+self.bias
