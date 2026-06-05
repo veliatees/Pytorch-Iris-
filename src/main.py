@@ -93,16 +93,22 @@ for i in range(len(y_pred_test)):
 
 predictions=y_pred_test.detach().numpy()
 real_values=test_output_split.detach().numpy()
-print(predictions.shape)
-print(real_values.shape)
-plt.figure(1)
-plt.scatter(x_axis, predictions, color="red")
-plt.scatter(x_axis, real_values, color="green")
+# print(predictions.shape)
+# print(real_values.shape)
+# plt.figure(1)
+# plt.scatter(x_axis, predictions, color="red")
+# plt.scatter(x_axis, real_values, color="green")
 
-# plt.figure(2)
-# plt.scatter(range(len(loss_list)), loss_list, color="blue")
+# # plt.figure(2)
+# # plt.scatter(range(len(loss_list)), loss_list, color="blue")
 
-plt.show()
+# plt.show()
 
 
 predict(test_input_split)
+
+torch.save({"weights": weights, "bias": bias}, "model.pt")  #torch.save to save the trained (weights and bias) tensors
+
+new_model= torch.load("model.pt")
+print(new_model.get("weights", "No weight found!"))
+#print(f"bias: {next(iter(new_model.values()))}")
