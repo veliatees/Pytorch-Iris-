@@ -34,12 +34,12 @@ output_tensor= torch.unsqueeze(output_tensor, dim=1)
 split_number= int(0.8*len(input_tensor))
 
 train_input_split= input_tensor[:split_number]
-print(train_input_split.shape)
+#print(train_input_split.shape)
 test_input_split= input_tensor[split_number:]
 print(test_input_split.shape)
 
 train_output_split = output_tensor[:split_number]
-print(train_output_split.shape)
+#print(train_output_split.shape)
 test_output_split =output_tensor[split_number:]
 print(test_output_split.shape)
 
@@ -62,6 +62,7 @@ bias= torch.zeros(1, requires_grad=True)
 loss_list=[]
 
 epochs= 1000
+
 for epoch in range(epochs):
     y_pred= torch.matmul(train_input_split, weights)+ bias
     loss= (train_output_split-y_pred)**2
@@ -71,35 +72,37 @@ for epoch in range(epochs):
     with torch.no_grad():       #this block will exclude the two lines below from gradient computation
         weights-= learning_rate * weights.grad
         bias-= learning_rate * bias.grad
-    if epoch%100==0:
-        print(f"weights[0]: {weights[0]}")
-        print(f"bias: {bias}")
-        print(loss)
-        print("--------------------------")
-        
-        
-    
-        #print(f"loss: {loss}")
+
     weights.grad.zero_()        #grad.zero_() should be included in the for loop to erase the grad memory
     bias.grad.zero_()
 
+
+
+def predict(X):
+    return torch.matmul(X, weights)+bias
+
+
+with torch.no_grad():
+    y_pred_test= predict(test_input_split)
+    test_loss= (test_output_split-y_pred_test)**2
+    print("test loss:", test_loss[0].item())
+
 x_axis=[]
-for i in range(len(y_pred)):
+for i in range(len(y_pred_test)):
     x_axis.append(i)
 
-predictions=y_pred.detach().numpy()
-real_values=train_output_split.detach().numpy()
-
-# plt.scatter(x_axis, predictions, color= "red")
-# plt.scatter(x_axis, real_values, color= "green")
-# plt.scatter(x_axis, loss_list[:len(x_axis)], color= "blue")
-# plt.show()
-
+predictions=y_pred_test.detach().numpy()
+real_values=test_output_split.detach().numpy()
+print(predictions.shape)
+print(real_values.shape)
 plt.figure(1)
 plt.scatter(x_axis, predictions, color="red")
 plt.scatter(x_axis, real_values, color="green")
 
-plt.figure(2)
-plt.scatter(range(len(loss_list)), loss_list, color="blue")
+# plt.figure(2)
+# plt.scatter(range(len(loss_list)), loss_list, color="blue")
 
 plt.show()
+
+
+predict(test_input_split)
